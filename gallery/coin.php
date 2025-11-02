@@ -43,6 +43,8 @@ $meta = getCoinMetadata($coinId);
         .nav-arrows a:hover { background: rgba(0,0,0,0.8); }
         .nav-arrows .prev { left: 20px; }
         .nav-arrows .next { right: 20px; }
+        .search-link { transition: all 0.2s; }
+        .search-link:hover { background: #4a4a4a !important; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.3); }
     </style>
 </head>
 <body>
@@ -83,6 +85,80 @@ $meta = getCoinMetadata($coinId);
             <div class="legend-item"><strong>Année:</strong> <span id="year"><?= $meta && $meta['year'] ? htmlspecialchars($meta['year']) : 'À analyser' ?></span></div>
             <div class="legend-item"><strong>Valeur:</strong> <span id="value"><?= $meta ? htmlspecialchars($meta['value']) : 'À analyser' ?></span></div>
             <div class="legend-item"><strong>Remarques:</strong> <span id="notes"><?= $meta && $meta['notes'] ? htmlspecialchars($meta['notes']) : 'Aucune' ?></span></div>
+
+            <?php if ($meta && isset($meta['valuation'])): ?>
+                <div style="margin-top: 20px; padding: 15px; background: rgba(76,175,80,0.1); border-left: 3px solid #4caf50; border-radius: 5px;">
+                    <h3 style="margin-bottom: 10px; font-size: 16px; color: #4caf50;">💰 Cotation</h3>
+                    <div class="legend-item"><strong>Prix:</strong> <?= htmlspecialchars($meta['valuation']['price']) ?> <?= htmlspecialchars($meta['valuation']['currency']) ?></div>
+                    <div class="legend-item"><strong>État:</strong> <?= htmlspecialchars($meta['valuation']['condition']) ?></div>
+                    <div class="legend-item"><strong>Source:</strong>
+                        <a href="<?= htmlspecialchars($meta['valuation']['source_url']) ?>"
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           style="color: #4caf50; text-decoration: none;">
+                            <?= htmlspecialchars($meta['valuation']['source_name']) ?> ↗
+                        </a>
+                    </div>
+                    <?php if (isset($meta['valuation']['notes'])): ?>
+                        <div class="legend-item"><strong>Notes:</strong> <?= htmlspecialchars($meta['valuation']['notes']) ?></div>
+                    <?php endif; ?>
+                    <div class="legend-item" style="font-size: 11px; color: #888;">
+                        Mise à jour: <?= htmlspecialchars($meta['valuation']['last_updated']) ?>
+                    </div>
+                </div>
+            <?php endif; ?>
+
+            <?php if ($meta): ?>
+                <?php
+                // Construire la requête de recherche
+                $searchParts = [];
+                if (!empty($meta['value'])) $searchParts[] = $meta['value'];
+                if (!empty($meta['year'])) $searchParts[] = $meta['year'];
+                if (!empty($meta['country'])) $searchParts[] = $meta['country'];
+                if (!empty($meta['currency'])) $searchParts[] = $meta['currency'];
+                $searchQuery = implode(' ', $searchParts);
+                $encodedQuery = urlencode($searchQuery);
+
+                // URLs de recherche
+                $numistaUrl = "https://en.numista.com/catalogue/index.php?mode=simplifie&p=1&l=&r=&e=&d=&ca=3&no=&i=&v=&m=&a=&t=&dg=&w=&u=&f=&g=&tb=1&tc=1&tn=1&tp=1&tt=1&te=1&cat=y&ru=&cc=&cno=&cn=&cj=&ce=&cu=&cg=&cy=&bi=&mt=&ds=&do=&dd=&de=&km=&fr=&ca=&pe=&py=&ct=coin&std=1&wi=0&ma=0&se=" . $encodedQuery;
+                $cgbUrl = "https://www.cgb.fr/catalogsearch/result/?q=" . $encodedQuery;
+
+                // Pour Argus2euros, uniquement si c'est une pièce Euro
+                $isEuro = (stripos($meta['currency'], 'euro') !== false || stripos($meta['currency'], 'eur') !== false);
+                ?>
+                <div style="margin-top: 20px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 5px;">
+                    <h3 style="margin-bottom: 10px; font-size: 14px; color: #999;">🔍 Rechercher la cotation sur :</h3>
+                    <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                        <a href="<?= htmlspecialchars($numistaUrl) ?>"
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           class="search-link"
+                           style="padding: 8px 15px; background: #3a3a3a; color: #fff; text-decoration: none; border-radius: 5px; font-size: 13px; display: inline-block;">
+                            📚 Numista
+                        </a>
+                        <a href="<?= htmlspecialchars($cgbUrl) ?>"
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           class="search-link"
+                           style="padding: 8px 15px; background: #3a3a3a; color: #fff; text-decoration: none; border-radius: 5px; font-size: 13px; display: inline-block;">
+                            🏛️ CGB.fr
+                        </a>
+                        <?php if ($isEuro): ?>
+                            <a href="https://argus2euros.fr/"
+                               target="_blank"
+                               rel="noopener noreferrer"
+                               class="search-link"
+                               style="padding: 8px 15px; background: #3a3a3a; color: #fff; text-decoration: none; border-radius: 5px; font-size: 13px; display: inline-block;">
+                                💶 Argus2euros
+                            </a>
+                        <?php endif; ?>
+                    </div>
+                    <div style="margin-top: 10px; font-size: 11px; color: #666;">
+                        Recherche : "<?= htmlspecialchars($searchQuery) ?>"
+                    </div>
+                </div>
+            <?php endif; ?>
+
             <?php if ($meta && (!isset($meta['ai_generated']) || $meta['ai_generated'] !== false)): ?>
                 <div class="ai-attribution" style="margin-top: 15px; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 5px; font-size: 12px; color: #999;">
                     ℹ️ Informations générées automatiquement par IA
