@@ -10,8 +10,9 @@ Le système de cotation permet d'afficher les prix estimés pour chaque pièce a
 
 Sur chaque page de pièce (`coin.php`), une section "🔍 Rechercher la cotation sur :" apparaît avec :
 
-- **📚 Numista** : Base de données collaborative mondiale
-- **🏛️ CGB.fr** : Archives professionnelles (1,2M+ pièces)
+- **📚 Numista** : Base de données collaborative mondiale (source fiable pour cotation)
+- **🛒 eBay** : Marché en ligne pour voir les prix de vente actuels
+- **🏷️ Le Bon Coin** : Annonces locales pour comparer les prix du marché français
 - **💶 Argus2euros** : Spécialiste Euro (affiché uniquement pour les pièces Euro)
 
 Chaque lien ouvre automatiquement une recherche pré-remplie avec les informations de la pièce (valeur, année, pays, monnaie).
@@ -124,14 +125,25 @@ Le script :
   - Communauté active
 - **Utilisation** : Pour toutes les pièces
 
-### CGB.fr
+### eBay
 
-- **URL** : https://www.cgb.fr
+- **URL** : https://www.ebay.fr
 - **Avantages** :
-  - 1,285,431+ pièces archivées
-  - Professionnel reconnu
-  - Historique réel de ventes
-- **Utilisation** : Surtout pour pièces françaises
+  - Prix de vente réels et actuels
+  - Large sélection internationale
+  - Historique des ventes disponible
+- **Utilisation** : Pour voir les prix du marché actuel
+- **Note** : Éviter pour cotation officielle, privilégier Numista
+
+### Le Bon Coin
+
+- **URL** : https://www.leboncoin.fr
+- **Avantages** :
+  - Prix du marché local français
+  - Annonces entre particuliers
+  - Tendances régionales
+- **Utilisation** : Pour comparer avec le marché français
+- **Note** : Prix souvent plus bas, ne pas utiliser comme référence principale
 
 ### Argus2euros
 

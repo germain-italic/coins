@@ -121,7 +121,8 @@ $meta = getCoinMetadata($coinId);
 
                 // URLs de recherche
                 $numistaUrl = "https://fr.numista.com/catalogue/index.php?r=" . $encodedQuery . "&cat=y";
-                $cgbUrl = "https://www.cgb.fr/catalogsearch/result/?q=" . $encodedQuery;
+                $ebayUrl = "https://www.ebay.fr/sch/i.html?_nkw=" . $encodedQuery . "&_sacat=11116";
+                $leboncoinUrl = "https://www.leboncoin.fr/recherche?category=82&text=" . $encodedQuery;
 
                 // Pour Argus2euros, uniquement si c'est une pièce Euro
                 $isEuro = (stripos($meta['currency'], 'euro') !== false || stripos($meta['currency'], 'eur') !== false);
@@ -136,12 +137,19 @@ $meta = getCoinMetadata($coinId);
                            style="padding: 8px 15px; background: #3a3a3a; color: #fff; text-decoration: none; border-radius: 5px; font-size: 13px; display: inline-block;">
                             📚 Numista
                         </a>
-                        <a href="<?= htmlspecialchars($cgbUrl) ?>"
+                        <a href="<?= htmlspecialchars($ebayUrl) ?>"
                            target="_blank"
                            rel="noopener noreferrer"
                            class="search-link"
                            style="padding: 8px 15px; background: #3a3a3a; color: #fff; text-decoration: none; border-radius: 5px; font-size: 13px; display: inline-block;">
-                            🏛️ CGB.fr
+                            🛒 eBay
+                        </a>
+                        <a href="<?= htmlspecialchars($leboncoinUrl) ?>"
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           class="search-link"
+                           style="padding: 8px 15px; background: #3a3a3a; color: #fff; text-decoration: none; border-radius: 5px; font-size: 13px; display: inline-block;">
+                            🏷️ Le Bon Coin
                         </a>
                         <?php if ($isEuro): ?>
                             <a href="https://argus2euros.fr/"
