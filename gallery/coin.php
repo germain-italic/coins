@@ -73,12 +73,20 @@ $meta = getCoinMetadata($coinId);
         </div>
 
         <div class="legend">
-            <h2>Informations</h2>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h2 style="margin: 0;">Informations</h2>
+                <button id="editBtn" style="padding: 8px 16px; background: #3a3a3a; color: #fff; border: none; border-radius: 5px; cursor: pointer;">✏️ Modifier</button>
+            </div>
             <div class="legend-item"><strong>Pays:</strong> <span id="country"><?= $meta ? htmlspecialchars($meta['country']) : 'À analyser' ?></span></div>
             <div class="legend-item"><strong>Monnaie:</strong> <span id="currency"><?= $meta ? htmlspecialchars($meta['currency']) : 'À analyser' ?></span></div>
             <div class="legend-item"><strong>Année:</strong> <span id="year"><?= $meta && $meta['year'] ? htmlspecialchars($meta['year']) : 'À analyser' ?></span></div>
             <div class="legend-item"><strong>Valeur:</strong> <span id="value"><?= $meta ? htmlspecialchars($meta['value']) : 'À analyser' ?></span></div>
             <div class="legend-item"><strong>Remarques:</strong> <span id="notes"><?= $meta && $meta['notes'] ? htmlspecialchars($meta['notes']) : 'Aucune' ?></span></div>
+            <?php if ($meta && (!isset($meta['ai_generated']) || $meta['ai_generated'] !== false)): ?>
+                <div class="ai-attribution" style="margin-top: 15px; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 5px; font-size: 12px; color: #999;">
+                    ℹ️ Informations générées automatiquement par IA
+                </div>
+            <?php endif; ?>
         </div>
     </div>
 
@@ -92,6 +100,20 @@ $meta = getCoinMetadata($coinId);
     </div>
 
     <script>
+        const coinId = <?= $coinId ?>;
+        let isAuthenticated = false;
+
+        // Vérifier l'authentification au chargement
+        fetch('edit_metadata.php', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: 'action=check_auth'
+        })
+        .then(r => r.json())
+        .then(data => {
+            isAuthenticated = data.authenticated;
+        });
+
         // Navigation clavier entre pièces
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowLeft' && <?= $prevCoin !== null ? $prevCoin : 'null' ?> !== null) {
@@ -104,6 +126,64 @@ $meta = getCoinMetadata($coinId);
         function openLightbox(coinId, photoIndex) {
             window.location.href = 'lightbox.php?coin=' + coinId + '&photo=' + photoIndex;
         }
+
+        // Gestion de l'édition
+        document.getElementById('editBtn').addEventListener('click', async () => {
+            if (!isAuthenticated) {
+                const password = prompt('Mot de passe requis pour modifier:');
+                if (!password) return;
+
+                const loginResp = await fetch('edit_metadata.php', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                    body: `action=login&password=${encodeURIComponent(password)}`
+                });
+                const loginData = await loginResp.json();
+
+                if (!loginData.success) {
+                    alert('Mot de passe incorrect');
+                    return;
+                }
+                isAuthenticated = true;
+            }
+
+            // Afficher le formulaire d'édition
+            const country = document.getElementById('country').textContent;
+            const currency = document.getElementById('currency').textContent;
+            const value = document.getElementById('value').textContent;
+            const year = document.getElementById('year').textContent;
+            const notes = document.getElementById('notes').textContent;
+
+            const newCountry = prompt('Pays:', country === 'À analyser' ? '' : country);
+            if (newCountry === null) return;
+
+            const newCurrency = prompt('Monnaie:', currency === 'À analyser' ? '' : currency);
+            if (newCurrency === null) return;
+
+            const newValue = prompt('Valeur:', value === 'À analyser' ? '' : value);
+            if (newValue === null) return;
+
+            const newYear = prompt('Année:', year === 'À analyser' ? '' : year);
+            if (newYear === null) return;
+
+            const newNotes = prompt('Remarques:', notes === 'Aucune' ? '' : notes);
+            if (newNotes === null) return;
+
+            // Envoyer la mise à jour
+            const updateResp = await fetch('edit_metadata.php', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: `action=update&coin_id=${coinId}&country=${encodeURIComponent(newCountry)}&currency=${encodeURIComponent(newCurrency)}&value=${encodeURIComponent(newValue)}&year=${encodeURIComponent(newYear)}&notes=${encodeURIComponent(newNotes)}`
+            });
+            const updateData = await updateResp.json();
+
+            if (updateData.success) {
+                alert(updateData.message);
+                location.reload();
+            } else {
+                alert('Erreur: ' + updateData.message);
+            }
+        });
     </script>
 </body>
 </html>
