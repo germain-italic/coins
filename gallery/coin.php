@@ -120,7 +120,7 @@ $meta = getCoinMetadata($coinId);
                 $encodedQuery = urlencode($searchQuery);
 
                 // URLs de recherche
-                $numistaUrl = "https://en.numista.com/catalogue/index.php?mode=simplifie&p=1&l=&r=&e=&d=&ca=3&no=&i=&v=&m=&a=&t=&dg=&w=&u=&f=&g=&tb=1&tc=1&tn=1&tp=1&tt=1&te=1&cat=y&ru=&cc=&cno=&cn=&cj=&ce=&cu=&cg=&cy=&bi=&mt=&ds=&do=&dd=&de=&km=&fr=&ca=&pe=&py=&ct=coin&std=1&wi=0&ma=0&se=" . $encodedQuery;
+                $numistaUrl = "https://fr.numista.com/catalogue/index.php?r=" . $encodedQuery . "&cat=y";
                 $cgbUrl = "https://www.cgb.fr/catalogsearch/result/?q=" . $encodedQuery;
 
                 // Pour Argus2euros, uniquement si c'est une pièce Euro

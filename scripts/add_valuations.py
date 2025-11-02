@@ -67,7 +67,7 @@ def open_search(coin):
     encoded_query = urllib.parse.quote(search_query)
 
     # URL de recherche Numista
-    search_url = f"https://en.numista.com/catalogue/index.php?mode=simplifie&p=1&l=&r=&e=&d=&ca=3&no=&i=&v=&m=&a=&t=&dg=&w=&u=&f=&g=&tb=1&tc=1&tn=1&tp=1&tt=1&te=1&cat=y&ru=&cc=&cno=&cn=&cj=&ce=&cu=&cg=&cy=&bi=&mt=&ds=&do=&dd=&de=&km=&fr=&ca=&pe=&py=&ct=coin&std=1&wi=0&ma=0&se={encoded_query}"
+    search_url = f"https://fr.numista.com/catalogue/index.php?r={encoded_query}&cat=y"
 
     print(f"\n🔍 Ouverture de la recherche dans le navigateur...")
     print(f"   Requête: {search_query}")
