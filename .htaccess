@@ -1,0 +1,24 @@
+# Protection fichiers sensibles
+<FilesMatch "^\.env">
+    Require all denied
+</FilesMatch>
+
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>
+
+# Désactiver directory listing
+Options -Indexes
+
+# Protection scripts Python
+<FilesMatch "\.py$">
+    Require all denied
+</FilesMatch>
+
+# Headers de sécurité (backup si PHP headers ne fonctionnent pas)
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "DENY"
+    Header always set X-XSS-Protection "1; mode=block"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>

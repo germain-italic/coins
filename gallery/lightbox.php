@@ -1,5 +1,6 @@
 <?php
 require_once 'config.php';
+require_once 'security_headers.php';
 
 $coinId = intval($_GET['coin'] ?? 0);
 $photoIndex = intval($_GET['photo'] ?? 0);

@@ -1,5 +1,6 @@
 <?php
 require_once 'config.php';
+require_once 'security_headers.php';
 
 $coinId = intval($_GET['id'] ?? 0);
 $coins = getCoins();

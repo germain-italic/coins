@@ -69,13 +69,51 @@ if ($action === 'login') {
         exit;
     }
 
+    // Rate limiting par IP (5 tentatives max par 15 minutes)
+    $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+    $loginAttemptsFile = sys_get_temp_dir() . '/coin_login_attempts.json';
+    $attempts = [];
+
+    if (file_exists($loginAttemptsFile)) {
+        $attempts = json_decode(file_get_contents($loginAttemptsFile), true) ?? [];
+    }
+
+    // Nettoyer les tentatives anciennes (> 15 min)
+    $cutoff = time() - 900;
+    if (isset($attempts[$ip])) {
+        $attempts[$ip] = array_filter($attempts[$ip], fn($t) => $t > $cutoff);
+    }
+
+    // Vérifier le nombre de tentatives
+    if (isset($attempts[$ip]) && count($attempts[$ip]) >= 5) {
+        $response['message'] = 'Trop de tentatives. Réessayez dans 15 minutes.';
+        http_response_code(429);
+        echo json_encode($response);
+        exit;
+    }
+
     // Utiliser hash_equals pour éviter timing attacks
     if (hash_equals($editPasswordHash, $password)) {
+        // Régénérer l'ID de session pour éviter session fixation
+        session_regenerate_id(true);
+
         // Ne jamais stocker le mot de passe en session, utiliser un hash
         $_SESSION['edit_auth_hash'] = hash('sha256', $editPasswordHash);
+
+        // Nettoyer les tentatives pour cette IP
+        unset($attempts[$ip]);
+        file_put_contents($loginAttemptsFile, json_encode($attempts), LOCK_EX);
+
         $response['success'] = true;
         $response['message'] = 'Authentifié';
     } else {
+        // Enregistrer tentative échouée
+        if (!isset($attempts[$ip])) {
+            $attempts[$ip] = [];
+        }
+        $attempts[$ip][] = time();
+        file_put_contents($loginAttemptsFile, json_encode($attempts), LOCK_EX);
+
         // Rate limiting basique
         sleep(1); // Ralentir les tentatives de brute force
         $response['message'] = 'Mot de passe incorrect';

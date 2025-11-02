@@ -1,5 +1,6 @@
 <?php
 require_once 'config.php';
+require_once 'security_headers.php';
 
 // Récupérer tous les coins et métadonnées
 $coins = getCoins();
@@ -30,10 +31,20 @@ sort($countries);
 sort($currencies);
 rsort($years); // Années décroissantes
 
-// Récupérer les filtres actifs
-$filterCountry = $_GET['country'] ?? '';
-$filterCurrency = $_GET['currency'] ?? '';
-$filterYear = $_GET['year'] ?? '';
+// Récupérer et valider les filtres actifs
+$filterCountry = '';
+$filterCurrency = '';
+$filterYear = '';
+
+if (isset($_GET['country']) && in_array($_GET['country'], $countries, true)) {
+    $filterCountry = $_GET['country'];
+}
+if (isset($_GET['currency']) && in_array($_GET['currency'], $currencies, true)) {
+    $filterCurrency = $_GET['currency'];
+}
+if (isset($_GET['year']) && in_array($_GET['year'], $years, true)) {
+    $filterYear = $_GET['year'];
+}
 ?>
 <!DOCTYPE html>
 <html lang="fr">

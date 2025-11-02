@@ -1,0 +1,11 @@
+# Protection métadonnées JSON en écriture
+<FilesMatch "coins_metadata\.json$">
+    <RequireAll>
+        Require all granted
+    </RequireAll>
+</FilesMatch>
+
+# Empêcher l'exécution de PHP uploadé (si jamais)
+<FilesMatch "\.php$">
+    php_flag engine on
+</FilesMatch>
