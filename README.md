@@ -5,7 +5,12 @@ Photo gallery repository for coin collections.
 ## Structure
 
 - `pictures/` - Photo galleries in dated subdirectories (YYYY-MM-DD_HHhMM)
-- `crop_images.py` - Crop portrait photos to square format
+- `scripts/` - Python processing scripts
+  - `crop_images.py` - Crop portrait photos to square format
+  - `analyze_coins.py` - AI analysis of all coins
+  - `analyze_coins_sample.py` - Test on 5 coins sample
+- `gallery/` - PHP web gallery
+- `server.php` - Built-in PHP dev server
 
 ## Installation
 
@@ -21,7 +26,7 @@ pip install Pillow anthropic python-dotenv
 
 ```bash
 source venv/bin/activate
-python crop_images.py pictures/
+python scripts/crop_images.py pictures/
 ```
 
 Options:
@@ -97,7 +102,7 @@ cp .env.example .env
 
 ```bash
 source venv/bin/activate
-python analyze_coins.py
+python scripts/analyze_coins.py
 ```
 
 - Uses Claude Sonnet 4 (vision model)
@@ -106,6 +111,13 @@ python analyze_coins.py
 - Cost: ~$0.015/coin (~$1.50 for 99 coins)
 - Accuracy: ~95% (manual review recommended)
 
+**Test on sample (5 coins):**
+```bash
+python scripts/analyze_coins_sample.py
+```
+
 ### Manual corrections
 
-Edit `gallery/coins_metadata.json` to fix any errors, then refresh the gallery.
+Two options:
+1. Edit via web interface: Click "Modifier" button on coin detail page
+2. Edit JSON directly: Modify `gallery/coins_metadata.json`, then refresh gallery
