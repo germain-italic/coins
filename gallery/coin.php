@@ -102,6 +102,20 @@ $meta = getCoinMetadata($coinId);
     <script>
         const coinId = <?= $coinId ?>;
         let isAuthenticated = false;
+        let csrfToken = '';
+
+        // Récupérer le token CSRF
+        fetch('edit_metadata.php', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: 'action=get_csrf'
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                csrfToken = data.csrf_token;
+            }
+        });
 
         // Vérifier l'authentification au chargement
         fetch('edit_metadata.php', {
@@ -136,7 +150,7 @@ $meta = getCoinMetadata($coinId);
                 const loginResp = await fetch('edit_metadata.php', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                    body: `action=login&password=${encodeURIComponent(password)}`
+                    body: `action=login&password=${encodeURIComponent(password)}&csrf_token=${encodeURIComponent(csrfToken)}`
                 });
                 const loginData = await loginResp.json();
 
@@ -173,7 +187,7 @@ $meta = getCoinMetadata($coinId);
             const updateResp = await fetch('edit_metadata.php', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                body: `action=update&coin_id=${coinId}&country=${encodeURIComponent(newCountry)}&currency=${encodeURIComponent(newCurrency)}&value=${encodeURIComponent(newValue)}&year=${encodeURIComponent(newYear)}&notes=${encodeURIComponent(newNotes)}`
+                body: `action=update&coin_id=${coinId}&country=${encodeURIComponent(newCountry)}&currency=${encodeURIComponent(newCurrency)}&value=${encodeURIComponent(newValue)}&year=${encodeURIComponent(newYear)}&notes=${encodeURIComponent(newNotes)}&csrf_token=${encodeURIComponent(csrfToken)}`
             });
             const updateData = await updateResp.json();
 
