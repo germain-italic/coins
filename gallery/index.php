@@ -23,12 +23,17 @@ $coins = getCoins();
 <body>
     <h1>Galerie de Pièces</h1>
     <div class="grid">
-        <?php foreach ($coins as $index => $coinImages): ?>
+        <?php foreach ($coins as $index => $coinImages):
+            $meta = getCoinMetadata($index);
+            $label = $meta ? "{$meta['country']} - {$meta['value']}" : "Pièce #" . ($index + 1);
+        ?>
             <a href="coin.php?id=<?= $index ?>" class="coin-card">
-                <img src="<?= PICTURES_URL . '/' . $coinImages[0] ?>" alt="Pièce <?= $index + 1 ?>">
+                <img src="<?= PICTURES_URL . '/' . $coinImages[0] ?>" alt="<?= htmlspecialchars($label) ?>">
                 <div class="coin-info">
-                    <h3>Pièce #<?= $index + 1 ?></h3>
-                    <p id="legend-<?= $index ?>"><!-- Légende à venir --></p>
+                    <h3><?= htmlspecialchars($label) ?></h3>
+                    <?php if ($meta && $meta['year']): ?>
+                        <p><?= htmlspecialchars($meta['year']) ?></p>
+                    <?php endif; ?>
                 </div>
             </a>
         <?php endforeach; ?>

@@ -12,7 +12,7 @@ Photo gallery repository for coin collections.
 ```bash
 python3 -m venv venv
 source venv/bin/activate
-pip install Pillow
+pip install Pillow anthropic python-dotenv
 ```
 
 ## Usage
@@ -56,4 +56,32 @@ php server.php
 
 ### Legend fields
 
-- Country, year, value, notes (to be populated later)
+- Country, year, value, notes (populated via AI analysis)
+
+## AI Analysis
+
+### Setup
+
+1. Get API key: https://console.anthropic.com/
+2. Create `.env` file:
+```bash
+cp .env.example .env
+# Edit .env and add your API key
+```
+
+### Analyze coins
+
+```bash
+source venv/bin/activate
+python analyze_coins.py
+```
+
+- Uses Claude Sonnet 4 (vision model)
+- Extracts: country, currency, value, year, notes
+- Output: `gallery/coins_metadata.json`
+- Cost: ~$0.015/coin (~$1.50 for 99 coins)
+- Accuracy: ~95% (manual review recommended)
+
+### Manual corrections
+
+Edit `gallery/coins_metadata.json` to fix any errors, then refresh the gallery.

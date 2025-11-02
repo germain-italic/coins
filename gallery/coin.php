@@ -13,6 +13,7 @@ if ($coinId < 0 || $coinId >= $totalCoins) {
 $coinImages = $coins[$coinId];
 $prevCoin = $coinId > 0 ? $coinId - 1 : null;
 $nextCoin = $coinId < $totalCoins - 1 ? $coinId + 1 : null;
+$meta = getCoinMetadata($coinId);
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -51,7 +52,14 @@ $nextCoin = $coinId < $totalCoins - 1 ? $coinId + 1 : null;
     </div>
 
     <div class="container">
-        <h1>Pièce #<?= $coinId + 1 ?></h1>
+        <h1><?php
+            if ($meta) {
+                echo htmlspecialchars("{$meta['country']} - {$meta['value']}");
+                if ($meta['year']) echo " (" . htmlspecialchars($meta['year']) . ")";
+            } else {
+                echo "Pièce #" . ($coinId + 1);
+            }
+        ?></h1>
 
         <div class="photos">
             <?php foreach ($coinImages as $idx => $img): ?>
@@ -66,10 +74,11 @@ $nextCoin = $coinId < $totalCoins - 1 ? $coinId + 1 : null;
 
         <div class="legend">
             <h2>Informations</h2>
-            <div class="legend-item"><strong>Pays:</strong> <span id="country">À renseigner</span></div>
-            <div class="legend-item"><strong>Année:</strong> <span id="year">À renseigner</span></div>
-            <div class="legend-item"><strong>Valeur:</strong> <span id="value">À renseigner</span></div>
-            <div class="legend-item"><strong>Remarques:</strong> <span id="notes">À renseigner</span></div>
+            <div class="legend-item"><strong>Pays:</strong> <span id="country"><?= $meta ? htmlspecialchars($meta['country']) : 'À analyser' ?></span></div>
+            <div class="legend-item"><strong>Monnaie:</strong> <span id="currency"><?= $meta ? htmlspecialchars($meta['currency']) : 'À analyser' ?></span></div>
+            <div class="legend-item"><strong>Année:</strong> <span id="year"><?= $meta && $meta['year'] ? htmlspecialchars($meta['year']) : 'À analyser' ?></span></div>
+            <div class="legend-item"><strong>Valeur:</strong> <span id="value"><?= $meta ? htmlspecialchars($meta['value']) : 'À analyser' ?></span></div>
+            <div class="legend-item"><strong>Remarques:</strong> <span id="notes"><?= $meta && $meta['notes'] ? htmlspecialchars($meta['notes']) : 'Aucune' ?></span></div>
         </div>
     </div>
 

@@ -17,6 +17,12 @@ enhanced_tests/
 test_crop/
 preview_*.jpg
 
+# API keys
+.env
+
+# Generated metadata
+gallery/coins_metadata.json
+
 # IDE
 .vscode/
 .idea/

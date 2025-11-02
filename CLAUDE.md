@@ -1,0 +1,1 @@
+- ce repository est destiné à accueillir des galeries photos de pièces de monnaie (qui sont stockées dans le dossier pictures/ dans des sous-dossiers datés)
